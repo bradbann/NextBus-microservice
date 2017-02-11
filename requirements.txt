@@ -1,0 +1,8 @@
+flask
+flask-restful
+xmljson
+redis
+requests
+nose
+coverage
+nosexcover
