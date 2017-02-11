@@ -1,0 +1,28 @@
+version: '2'
+services:
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+
+  nextbus1:
+    build: ./nextbus
+    ports:
+      - "5000"
+
+  nextbus2:
+    build: ./nextbus
+    ports:
+      - "5000"
+
+  nextbus3:
+    build: ./nextbus
+    ports:
+      - "5000"
+
+  redis:
+    image: redis
+    ports:
+      - "6379"
+
+

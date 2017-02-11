@@ -63,7 +63,7 @@ class NextBusDefault(Resource):
         n1 = dt.datetime.now().microsecond
         response_format = request.args.get('format', 'json').lower()
 
-        endpoint = request.path.split('/')[-1]
+        endpoint = request.path.split('/')[-1]  # e.g. routeList
         nextbus_req = endpoint
         if len(request.args) > 0:
             # Ensure that the query params are sorted, since the entire URI is
@@ -143,5 +143,5 @@ if __name__ == '__main__':
         NextBusSlowRequests,
         '/nextbus/slow_requests'
     )
-    APP.run(debug=True)
+    APP.run(host='0.0.0.0', debug=True)
 
