@@ -15,6 +15,26 @@ will be changed within 10 seconds (the check interval of confd). All these servi
  - **etcd** runs inside a single container.
  - **redis** also runs on its own container.
 
+## Dependencies
+In order to run the application, you need to have **Docker** and **docker-compose** installed in your system. You can confirm this by typing the following in a terminal:
+```
+$ docker --version
+Docker version 1.13.1, build 092cba3
+$ docker-compose --version
+docker-compose version 1.10.1, build b252738
+```
+
+Also make sure you have **GNU Make** available:
+```
+$ make --version
+GNU Make 4.1
+Built for x86_64-pc-linux-gnu
+Copyright (C) 1988-2014 Free Software Foundation, Inc.
+Licence GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+```
+
 ## How to run
 In order to put the system up and running, you just need to do the following:
 ```
