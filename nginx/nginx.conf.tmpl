@@ -1,3 +1,4 @@
+daemon off;
 worker_processes 4;
 
 events { worker_connections 1024; }
@@ -5,9 +6,13 @@ events { worker_connections 1024; }
 http {
 	upstream nextbus-app {
 		least_conn;
-		server nextbus1:5000 weight=10 max_fails=3 fail_timeout=30s;
-		server nextbus2:5000 weight=10 max_fails=3 fail_timeout=30s;
-		server nextbus3:5000 weight=10 max_fails=3 fail_timeout=30s;
+		{{ $servers := getvs ( printf "/services/nextbus/servers/*" ) }}
+		{{ if $servers }}
+		{{ range $server := $servers }}
+		{{ $data := json $server }}
+		server {{ $data.host }}:{{ $data.port }} weight=10 max_fails=3 fail_timeout=30s;
+		{{ end }}
+		{{ end }}
 	}
 
 	server {
