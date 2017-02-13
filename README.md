@@ -123,7 +123,7 @@ check_cmd = "/usr/sbin/nginx -t -c {{.src}}"
 reload_cmd = "/usr/sbin/service nginx reload"
 ```
 
-The *check_cmd* directive is a way of **nginx** to verify if a configuration file is valid, before reloading it. If the file is valid, it will be assumed as the new configuration file and **nginx** will reload it, with no downtime. The new configuration file is built from a template file called *nginx.conf.tmpl*:
+The *check_cmd* directive is a way of **confd** to use the **nginx** configuration check to verify if a configuration file is valid, before reloading it. If the file is valid, it will be assumed as the new configuration file and **nginx** will reload it, with no downtime. The new configuration file is built from a template file called *nginx.conf.tmpl*:
 
 ```
 daemon off;
