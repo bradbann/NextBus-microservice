@@ -24,24 +24,13 @@ $ docker-compose --version
 docker-compose version 1.10.1, build b252738
 ```
 
-Optionally, you should have **GNU Make** available:
-```
-$ make --version
-GNU Make 4.1
-Built for x86_64-pc-linux-gnu
-Copyright (C) 1988-2014 Free Software Foundation, Inc.
-Licence GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
-This is free software: you are free to change and redistribute it.
-There is NO WARRANTY, to the extent permitted by law.
-```
-
-If you don't, then you'll have to run the `docker-compose` commands manually.
-
 ## How to run
 In order to put the system up and running, you just need to do the following:
 ```
-$ make run
+$ docker-compose up
 ```
+
+If you want to run *docker-compose* in the background, just enter `docker-compose up -d`, instead.
 
 This will invoke the command `docker-compose up` and create 5 containers:
  - 1 container with **nginx**
@@ -49,7 +38,8 @@ This will invoke the command `docker-compose up` and create 5 containers:
  - 1 container with **etcd**
  - 1 container with **redis**
 
-In order to use the system, you can use `curl` or your browser and hit `http://127.0.0.1/nextbus/agencyList`, for example.
+In order to use the API, you can use `curl` or your browser and hit `http://127.0.0.1/nextbus/agencyList`, for example.
+To stop, just press CTRL+C, unless you used the `-d` flag. In that case, enter `docker-compose stop`. This will just stop the containers. If you want to remove the containers and the network, enter `docker-compose down`.
 
 ## Scalability
 Because the **nextbus** microservice is stateless, we can scale the system by just launching new containers. The only issue would be to let **nginx** know that

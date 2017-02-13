@@ -6,5 +6,3 @@ tests:
 run:
 	@docker-compose up
 
-scaleup:
-	@echo $(AMOUNT)
