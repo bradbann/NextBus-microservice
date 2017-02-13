@@ -162,3 +162,6 @@ Only the *upstream* block is affected by changes in **etcd**. Here's what's happ
  1. **confd** lists everything in **etcd** under the key /services/nextbus/servers.
  2. If **nextbus** containers previously made themselves discoverable, then `{{ if $servers }}` succeeds and two servers will be added to the *upstream* block.
  3. If no container made itself discoverable or it they died, then their old keys in **etcd** would have expired after 90 seconds, cause the *if* block to not be entered and the *upstream* section wouldn't have any server. Since this is an invalid **nginx** configuration, the *check_cmd* in *nginx.toml* would fail.
+
+# License
+MIT. Click [here](https://github.com/csixteen/NextBus-microservice/blob/master/LICENSE) to see the full text.
