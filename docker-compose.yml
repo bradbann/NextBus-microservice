@@ -15,14 +15,14 @@ services:
     depends_on:
       - etcd
 
-  nextbus1:
+  nextbus:
     build: ./nextbus
     ports:
       - "5000"
     depends_on:
       - nginx
 
-  nextbus2:
+  nextbus1:
     build: ./nextbus
     ports:
       - "5000"

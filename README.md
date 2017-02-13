@@ -24,7 +24,7 @@ $ docker-compose --version
 docker-compose version 1.10.1, build b252738
 ```
 
-Also make sure you have **GNU Make** available:
+Optionally, you should have **GNU Make** available:
 ```
 $ make --version
 GNU Make 4.1
@@ -34,6 +34,8 @@ Licence GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 ```
+
+If you don't, then you'll have to run the `docker-compose` commands manually.
 
 ## How to run
 In order to put the system up and running, you just need to do the following:
@@ -48,3 +50,11 @@ This will invoke the command `docker-compose up` and create 5 containers:
  - 1 container with **redis**
 
 In order to use the system, you can use `curl` or your browser and hit `http://127.0.0.1/nextbus/agencyList`, for example.
+
+## Scalability
+Because the **nextbus** microservice is stateless, we can scale the system by just launching new containers. The only issue would be to let **nginx** know that
+there are new containers for it to balance the incoming traffic. Fortunatelly, this can be solved using **etcd** and **confd** together. Here's how these two components
+solve the service discoverability issue:
+ 1. **etcd** is used as key/value store by **nextbus**.
+ 2. When a new container with **nextbus** is launched, it stores its *host* and *port* information in **etcd** under `/services/nextbus/servers/<hostname>`. This is accomplished by the **nextbus.sh** script, which is also invoked as a cron job every minute. This key in **etcd** expires after 90 seconds, which is why **nextbus.sh** must also run as a cron job. The reason for having a TTL on the key is that we want to make sure that if a container dies, **nginx** will stop forwarding traffic to the dead container.
+ 3. **nginx** is launched together with **confd**. **confd** is responsible for monitoring **etcd** for changes every 10 seconds. Whenever it detects a change, it updates **nginx** configuration accordingly, using a template. The new configuration is checked for errors, before being reloaded. If there are any errors, the old configuration is kept.

@@ -7,7 +7,4 @@ run:
 	@docker-compose up
 
 scaleup:
-	@echo "scale up"
-
-scaledown:
-	@echo "scale down"
+	@echo $(AMOUNT)
