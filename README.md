@@ -247,7 +247,7 @@ nginx_1     | 2017-02-13T12:10:02Z ceedbb3be52f confd[44]: INFO Target config /e
 Three more containers were launched, each of the containers made itself announced to **etcd** and the configuration of **nginx** was updated accordingly:
 
 ```bash
-docker exec -it ceedbb3be52f /bin/bash
+$ docker exec -it ceedbb3be52f /bin/bash
 root@ceedbb3be52f:/tmp# cat /etc/nginx/nginx.conf 
 daemon off;
 worker_processes 4;
