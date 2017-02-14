@@ -46,6 +46,17 @@ To stop, just press CTRL+C, unless you used the `-d` flag. In that case, enter `
 ## Endpoints
 There are several endpoints available, even though most of them redirect to NextBus web service. For those endpoints, please consult the official documentation for available parameters and expected responses. You can find the documentation [here](http://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf).
 
+```
+/nextbus/agencyList
+/nextbus/routeList
+/nextbus/routeConfig
+/nextbus/predictions
+/nextbus/predictionsForMultiStops
+/nextbus/schedule
+/nextbus/messages
+/nextbus/vehicleLocation
+```
+
 Note that to the default NextBus endpoints, it was added the feature of retrieving the response in either JSON or XML formats. You just need to add a query parameter *format* with the values **json** or **xml**.
 
 ### /nextbus/slow_requests
