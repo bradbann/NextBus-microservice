@@ -1,7 +1,6 @@
 # coding: utf-8
 from datetime import datetime
 import json
-import pprint
 from time import sleep
 from xml.etree.ElementTree import fromstring
 
@@ -15,7 +14,6 @@ from xmljson import badgerfish as bf
 
 
 NEXTBUS_API = ' http://webservices.nextbus.com/service/publicXMLFeed?command='
-pp = pprint.PrettyPrinter(indent=2)
 
 
 def get_interval(route):

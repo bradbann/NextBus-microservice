@@ -3,7 +3,7 @@ This is a RESTful wrapper around NextBus Public XML Feed, that adds a couple of 
  - return JSON or XML responses (the original service only returns XML)
  - Provides an endpoint that returns the total queries for each endpoint: `/nextbus/total_queries/<endpoint>`
  - Provides an endpoint that returns the slow queries: `/nextbus/slow_queries`
- - Provides an endpoint that allows the user to explore all the rounts that don't operate at a certain hour: `/nextbus/notRunning?hour=<hour>`
+ - Provides an endpoint that allows the user to explore all the rounts that don't operate at a certain hour: `/nextbus/notRunning?t=<hour>`
 
 The system is composed of several services in order to provide high availability and in order to be scalable. The main service is called **nextbus** and is
 stateless. The result of each query to NextBus Public XML Feed is stored in **redis** for a period of 30 seconds. **nginx** sits in front of two **nextbus** 
@@ -37,6 +37,8 @@ This will invoke the command `docker-compose up` and create 5 containers:
  - 2 containers with **nextbus**
  - 1 container with **etcd**
  - 1 container with **redis**
+ - 1 container with **elasticsearch**
+ - 1 container with **populator**
 
 In order to use the API, you can use `curl` or your browser and hit `http://127.0.0.1/nextbus/agencyList`, for example.
 To stop, just press CTRL+C, unless you used the `-d` flag. In that case, enter `docker-compose stop`. This will just stop the containers. If you want to remove the containers and the network, enter `docker-compose down`.
@@ -79,7 +81,7 @@ Example response:
 ]
 ```
 
-### /nextbus/total_queries/<endpoint>
+### /nextbus/total_queries/:endpoint
 Returns the total number of queries performed to a certain endpoint.
 
 Example response (/nextbus/total_queries/agencyList):
@@ -88,6 +90,36 @@ Example response (/nextbus/total_queries/agencyList):
     "total_queries": 6
 }
 ```
+
+### /nextbus/notRunning?t=time&page=N
+
+Returns a list of routes that don't operate at a certain time. The parameter *t* should have a format **HHMMSS** and is mandatory. The parameter *page* indicates which page of the results you want to fetch. Each page holds at most 10 results.
+
+Example response (/nextbus/notRunning?t=0200):
+```json
+{
+    "pages": 8,
+    "routes": [
+        "19",
+        "22",
+        "24",
+        "14",
+        "14R",
+        "82X",
+        "83X",
+        "25",
+        "29",
+        "44"
+    ]
+}
+```
+
+This returns a list of routes that don't operate at 2:00AM. There are 8 pages of results.
+
+**NOTE**: right now this endpoint doesn't return a correct response, since the service **populator** is not building correctly the interval of operation for certain routes. I need to understand better the data that I get from NextBus. This means that most likely you will get routes that actually operate at the given hour, simply because ElasticSearch is not being properly populated.
+
+## Populator
+In order to provide the endpoint `/nextbus/notRunning`, a separate service called **populator** is responsible for populating an instance of ElasticSearch at regular intervals of one hour. Every hour, this service fetches all the schedules from all the routes from agency *sf-muni* (for San Francisco) and builds the intervals of operation for each route. Right now, the algorithm is a bit buggy, since I find the data coming from NextBus to be a bit confusing. As a result, certain routes have incorrect start and end hours of service.
 
 ## Scalability
 Because the **nextbus** microservice is stateless, we can scale the system by just launching new containers. The only issue would be to let **nginx** know that
@@ -330,6 +362,12 @@ http {
 	}
 }
 ```
+
+# TODO
+ - Fix algorithm from **populator** service.
+ - Improve coverage (current coverage: 0%)
+ - Integrate with TravisCI
+ - Added proper logging to the services **nextbus** and **populator**.
 
 # License
 MIT. Click [here](https://github.com/csixteen/NextBus-microservice/blob/master/LICENSE) to see the full text.
