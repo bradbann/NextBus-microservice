@@ -29,6 +29,17 @@ services:
     depends_on:
       - nginx
 
+  populator:
+    build: ./nextbus-populator
+    depends_on:
+      - elas
+
+  elas:
+    image: elasticsearch
+    hostname: elas
+    ports:
+      - "9200:9200"
+
   redis:
     image: redis
     ports:

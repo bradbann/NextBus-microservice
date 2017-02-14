@@ -41,6 +41,54 @@ This will invoke the command `docker-compose up` and create 5 containers:
 In order to use the API, you can use `curl` or your browser and hit `http://127.0.0.1/nextbus/agencyList`, for example.
 To stop, just press CTRL+C, unless you used the `-d` flag. In that case, enter `docker-compose stop`. This will just stop the containers. If you want to remove the containers and the network, enter `docker-compose down`.
 
+## Endpoints
+There are several endpoints available, even though most of them redirect to NextBus web service. For those endpoints, please consult the official documentation for available parameters and expected responses. You can find the documentation [here](http://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf).
+
+Note that to the default NextBus endpoints, it was added the feature of retrieving the response in either JSON or XML formats. You just need to add a query parameter *format* with the values **json** or **xml**.
+
+### /nextbus/slow_requests
+Retrieves a list with all the requests, in a descending order of execution time in milliseconds (**note**: implement limit in this request). Right now, the name of the endpoint has the request ID as a suffix (e.g. agencyList:5).
+
+Example response:
+```json
+[
+    [
+        "agencyList:5",
+        406.562
+    ],
+    [
+        "agencyList:1",
+        404.653
+    ],
+    [
+        "agencyList:6",
+        1.396
+    ],
+    [
+        "agencyList:2",
+        1.364
+    ],
+    [
+        "agencyList:4",
+        0.762
+    ],
+    [
+        "agencyList:3",
+        0.476
+    ]
+]
+```
+
+### /nextbus/total_queries/<endpoint>
+Returns the total number of queries performed to a certain endpoint.
+
+Example response (/nextbus/total_queries/agencyList):
+```json
+{
+    "total_queries": 6
+}
+```
+
 ## Scalability
 Because the **nextbus** microservice is stateless, we can scale the system by just launching new containers. The only issue would be to let **nginx** know that
 there are new containers for it to balance the incoming traffic. Fortunatelly, this can be solved using **etcd** and **confd** together. Here's how these two components

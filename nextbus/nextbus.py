@@ -6,6 +6,8 @@ import re
 from urllib.parse import urlencode
 from xml.etree.ElementTree import fromstring
 
+from elasticsearch import Elasticsearch
+
 from flask import Flask, make_response, request
 from flask_restful import Api, Resource
 
@@ -27,6 +29,15 @@ def load_config():
     return parser
 
 def to_format(xml_str, f='json'):
+    """
+    Converts an XML string into a JSON response or
+    a proper XML response.
+    :type xml_str : str
+    :param xml_str:
+    :type f: str
+    :param f: Destination format (json or xml)
+    :returns: A Python object or a Flask Response object.
+    """
     if f == 'json':
         # Flask-RESTful by default sets content-type to 
         # JSON, so no need to build a response object
@@ -49,6 +60,7 @@ CONFIG = load_config()['default']
 REDIS_CLI = StrictRedis.from_url(
     CONFIG['redis_url'], decode_responses=True
 )
+ELASTICSEARCH = Elasticsearch(CONFIG['elasticsearch'])
 
 #;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 # Request Handlers (Flask stuff)
@@ -88,6 +100,9 @@ class NextBusDefault(Resource):
         pipe = REDIS_CLI.pipeline(True)
         if cache:
             pipe.set(nextbus_req, res)
+            # No need for setex, this is already a transaction.
+            # Actually setex here would break things.
+            pipe.expire(nextbus_req, 30)
         pipe.hincrby('total_queries', endpoint, 1)
         pipe.zadd(
             'slow_requests',
@@ -99,11 +114,53 @@ class NextBusDefault(Resource):
 
 
 class NextBusNotRunning(Resource):
+    """
+    Class that handles requests for retrieve routes that
+    don't run at a certain time. It expects the following
+    parameters:
+        - t: this is mandatory. It should be a timestamp in
+             the format HHMMSS
+        - page: this is optional. Should be an integers. Each
+                page holds at most 10 routes.
+    """
     def get(self):
-        pass
+        t = request.args.get('t', None)
+        if not t:
+            return {
+                'error': 'Mandatory parameter <t> is missing.'
+            }
+
+        t = request.args['t']
+        page = request.args.get('page', 0)
+        res = ELASTICSEARCH.search(
+            index='nextbus',
+            doc_type='route',
+            body={
+                'from': int(page) * 10,
+                'size': 10,
+                'query': {
+                    'bool': {
+                        'must': [
+                            {'range': {'first': {'gte': t}}},
+                            {'range': {'last': {'lte': t}}}
+                        ]
+                    }
+                }
+            }
+        )
+
+        total = res['hits']['total']
+        return {
+            'pages': total // 10 + int(total % 10 != 0),
+            'routes': [route['_id'] for route in res['hits']['hits']]
+        }
 
 
 class NextBusTotalQueries(Resource):
+    """
+    Class that handles requests for total queries to an
+    endpoint.
+    """
     def get(self, endpoint):
         total_queries = REDIS_CLI.hget('total_queries', endpoint)
 
@@ -111,6 +168,9 @@ class NextBusTotalQueries(Resource):
 
 
 class NextBusSlowRequests(Resource):
+    """
+    Class than handles requests for slow requests.
+    """
     def get(self):
         slow_requests = REDIS_CLI.zrange(
             'slow_requests', 0, -1, desc=True, withscores=True
