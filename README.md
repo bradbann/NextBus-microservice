@@ -376,9 +376,10 @@ http {
 
 # TODO
  - Fix algorithm from **populator** service.
+ - Make **populator** wait until it can connect to ElasticSearch for the first time, instead of the initial `sleep(5)`.
  - Improve coverage (current coverage: 0%)
  - Integrate with TravisCI
- - Added proper logging to the services **nextbus** and **populator**.
+ - Add proper logging to the services **nextbus** and **populator**.
 
 # License
 MIT. Click [here](https://github.com/csixteen/NextBus-microservice/blob/master/LICENSE) to see the full text.
