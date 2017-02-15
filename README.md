@@ -32,7 +32,7 @@ $ docker-compose up
 
 If you want to run *docker-compose* in the background, just enter `docker-compose up -d`, instead.
 
-This is what will be created when you bring the system up::
+This is what will be created when you bring the system up:
  - 1 container with **nginx**
  - 2 containers with **nextbus**
  - 1 container with **etcd**
