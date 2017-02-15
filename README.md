@@ -41,7 +41,7 @@ This is what will be created when you bring the system up:
  - 1 container with **populator**
 
 In order to use the API, you can use `curl` or your browser and hit `http://127.0.0.1/nextbus/agencyList`, for example.
-To stop, just press CTRL+C, unless you used the `-d` flag. In that case, enter `docker-compose stop`. This will just stop the containers. If you want to remove the containers and the network, enter `docker-compose down`.
+To stop the services, just press CTRL+C, unless you used the `-d` flag. In that case, enter `docker-compose stop`. This will just stop the containers. If you want to remove the containers and the network, enter `docker-compose down`.
 
 ## Endpoints
 There are several endpoints available, even though most of them redirect to NextBus web service. For those endpoints, please consult the official documentation for available parameters and expected responses. You can find the documentation [here](http://www.nextbus.com/xmlFeedDocs/NextBusXMLFeed.pdf).
