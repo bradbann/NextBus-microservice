@@ -8,7 +8,7 @@ This is a RESTful wrapper around NextBus Public XML Feed, that adds a couple of 
 The system is composed of several services in order to provide high availability and in order to be scalable. The main service is called **nextbus** and is
 stateless. The result of each query to NextBus Public XML Feed is stored in **redis** for a period of 30 seconds. **nginx** sits in front of two **nextbus** 
 services and acts as a load balancer. The **nextbus** service informs **etcd** of its existence whenever it's spawned, and also every minute. **confd** watches
-**etcd** for changes and adjusts **nginx** configuration accordingly. This means that if a **nextbus** service dies or is spwaned, the configuration of **nginx**
+**etcd** for changes and adjusts **nginx** configuration accordingly. This means that if a **nextbus** service dies or is spawned, the configuration of **nginx**
 will be changed within 10 seconds (the check interval of confd). All these services are running inside Docker containers:
  - **Nginx** and **confd** run inside one single container. This container also has a script that watches **etcd** every 10 seconds.
  - **nextbus** runs inside one single container with a cron job that constantly updates **etcd**.
