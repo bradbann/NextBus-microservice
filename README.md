@@ -60,7 +60,7 @@ There are several endpoints available, even though most of them redirect to Next
 Note that to the default NextBus endpoints, it was added the feature of retrieving the response in either JSON or XML formats. You just need to add a query parameter *format* with the values **json** or **xml**.
 
 ### /nextbus/slow_requests
-Retrieves a list with all the requests, in a descending order of execution time in milliseconds (**note**: implement limit in this request). Right now, the name of the endpoint has the request ID as a suffix (e.g. agencyList:5).
+Retrieves a list with all the requests, in a descending order of execution time in milliseconds (**note**: still need to implement limit in this request). Right now, the name of the endpoint has the request ID as a suffix (e.g. agencyList:5).
 
 Example response:
 ```json
