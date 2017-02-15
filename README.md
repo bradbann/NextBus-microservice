@@ -3,7 +3,7 @@ This is a RESTful wrapper around NextBus Public XML Feed, that adds a couple of 
  - return JSON or XML responses (the original service only returns XML)
  - Provides an endpoint that returns the total queries for each endpoint: `/nextbus/total_queries/<endpoint>`
  - Provides an endpoint that returns the slow queries: `/nextbus/slow_queries`
- - Provides an endpoint that allows the user to explore all the rounts that don't operate at a certain hour: `/nextbus/notRunning?t=<hour>`
+ - Provides an endpoint that allows the user to explore all the routes that don't operate at a certain hour: `/nextbus/notRunning?t=<hour>`
 
 The system is composed of several services in order to provide high availability and in order to be scalable. The main service is called **nextbus** and is
 stateless. The result of each query to NextBus Public XML Feed is stored in **redis** for a period of 30 seconds. **nginx** sits in front of two **nextbus** 
