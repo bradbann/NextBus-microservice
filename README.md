@@ -245,7 +245,7 @@ Only the *upstream* block is affected by changes in **etcd**. Here's what's happ
  3. If no container made itself discoverable or it they died, then their old keys in **etcd** would have expired after 90 seconds, cause the *if* block to not be entered and the *upstream* section wouldn't have any server. Since this is an invalid **nginx** configuration, the *check_cmd* in *nginx.toml* would fail.
 
 ### Scaling in action
-When we first run `make run`, the system starts with two **nextbus** containers. Let's check some logs:
+When we first run `docker-compose up`, the system starts with two **nextbus** containers. Let's check some logs:
 
 ```bash
 ...
