@@ -31,8 +31,6 @@ services:
 
   populator:
     build: ./nextbus-populator
-    depends_on:
-      - elas
 
   elas:
     image: elasticsearch

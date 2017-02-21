@@ -1,6 +1,7 @@
 # coding: utf-8
 from datetime import datetime
 import json
+import logging
 from time import sleep
 from xml.etree.ElementTree import fromstring
 
@@ -12,6 +13,16 @@ import requests
 
 from xmljson import badgerfish as bf
 
+
+# elasticsearch python client uses normal logging facilities with
+# DEBUG level. This is a bit annoying when we do a client.ping()
+# and the node/cluster is still not up, so I'm decreasing the 
+# level of verbosity in the logs.
+logging.basicConfig(
+    format="[%(levelname)s:%(asctime)s] %(message)s",
+    datefmt="%Y/%m/%d %H:%M:%S",
+    level=logging.ERROR
+)
 
 NEXTBUS_API = ' http://webservices.nextbus.com/service/publicXMLFeed?command='
 
@@ -118,11 +129,23 @@ def fetch_and_populate(es_client):
 
 
 if __name__ == '__main__':
-    print('[INFO] Letting other services warm up...')
-    sleep(5)
+    print('[INFO] Waiting for ElasticSearch to be available...')
 
-    elas = Elasticsearch(["elas"])
+    keep_waiting = True
+    elas = None
+    # waiting until ElasticSearch is available ...
+    # Curiously, if I use elas.ping(), it exits immediately,
+    # so I have to use info() instead.
+    while keep_waiting:
+        try:
+            elas = Elasticsearch(['elas'])
+            elas.info()
+            keep_waiting = False
+        except:
+            del elas
+            sleep(3)
 
+    print('[INFO] Connected to ElasticSearch...Populating data!')
     while True:
         fetch_and_populate(elas)
 
